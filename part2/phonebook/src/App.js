@@ -48,8 +48,37 @@ const App = () => {
           name: newName,
         };
 
-        personService.update(result.id, personForm).then(() => {
-          setMessage(`The number of '${newName}' was changed!`);
+        personService
+          .update(result.id, personForm)
+          .then(() => {
+            setMessage(`The number of '${newName}' was changed!`);
+            setSuccess("success");
+            setTimeout(() => {
+              setMessage(null);
+              setSuccess(null);
+            }, 5000);
+            retrievePersons();
+            setNewName("");
+            setNewNumber("");
+          })
+          .catch((error) => {
+            setMessage(error.response.data.error);
+            setTimeout(() => {
+              setMessage(null);
+              setSuccess(null);
+            }, 5000);
+          });
+      }
+    } else {
+      const personForm = {
+        name: newName,
+        number: newNumber,
+      };
+
+      personService
+        .create(personForm)
+        .then(() => {
+          setMessage(`Added '${newName}'`);
           setSuccess("success");
           setTimeout(() => {
             setMessage(null);
@@ -58,25 +87,14 @@ const App = () => {
           retrievePersons();
           setNewName("");
           setNewNumber("");
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setTimeout(() => {
+            setMessage(null);
+            setSuccess(null);
+          }, 5000);
         });
-      }
-    } else {
-      const personForm = {
-        name: newName,
-        number: newNumber,
-      };
-
-      personService.create(personForm).then(() => {
-        setMessage(`Added '${newName}'`);
-        setSuccess("success");
-        setTimeout(() => {
-          setMessage(null);
-          setSuccess(null);
-        }, 5000);
-        retrievePersons();
-        setNewName("");
-        setNewNumber("");
-      });
     }
   };
 
