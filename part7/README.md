@@ -1,4 +1,4 @@
-# Testing React apps
+# React router, custom hooks, styling app with CSS and webpack
 
 ## Exercises 7.1.-7.3.
 
