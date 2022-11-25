@@ -1,22 +1,25 @@
+import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
-import { useEffect, useState } from "react";
-import { ALL_AUTHORS, EDIT_BIRTH } from "../queries";
 
-const BornForm = ({ setError, authors }) => {
+import { ALL_AUTHORS, EDIT_AUTHOR } from "../queries";
+
+const BornForm = ({ names, setError }) => {
   const [name, setName] = useState("");
   const [born, setBorn] = useState("");
 
-  const [changeAuthor, result] = useMutation(EDIT_BIRTH, {
+  const [editAuthor, result] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
     onError: (error) => {
-      setError(error.graphQLErrors[0].message);
+      error.graphQLErrors > 0
+        ? setError(error.graphQLErrors[0].message)
+        : setError(error.message);
     },
   });
 
-  const submit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    changeAuthor({ variables: { name, born: Number(born) } });
+    editAuthor({ variables: { name, setBornTo: parseInt(born) } });
 
     setName("");
     setBorn("");
@@ -31,11 +34,10 @@ const BornForm = ({ setError, authors }) => {
   return (
     <div>
       <h2>Set birthyear</h2>
-      <form onSubmit={submit}>
+      <form onSubmit={handleSubmit}>
         <div>
-          auhtor name{" "}
           <select value={name} onChange={({ target }) => setName(target.value)}>
-            {authors.map((name, i) => (
+            {names.map((name, i) => (
               <option key={i} value={name}>
                 {name}
               </option>
@@ -43,14 +45,16 @@ const BornForm = ({ setError, authors }) => {
           </select>
         </div>
         <div>
-          birthyear{" "}
+          born
           <input
             type="number"
             value={born}
             onChange={({ target }) => setBorn(target.value)}
           />
         </div>
-        <button type="submit">change born year</button>
+        <div>
+          <button type="submit">update author</button>
+        </div>
       </form>
     </div>
   );

@@ -1,9 +1,14 @@
 import { useQuery } from "@apollo/client";
-import { ALL_AUTHORS } from "../queries";
 import BornForm from "./BornForm";
 
-const Authors = () => {
+import { ALL_AUTHORS } from "../queries";
+
+const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS);
+
+  if (!props.show) {
+    return null;
+  }
 
   if (result.loading) {
     return <div>loading...</div>;
@@ -13,7 +18,7 @@ const Authors = () => {
 
   return (
     <div>
-      <h2>Auhors</h2>
+      <h2>Authors</h2>
       <table>
         <tbody>
           <tr>
@@ -30,9 +35,9 @@ const Authors = () => {
           ))}
         </tbody>
       </table>
-
-      <BornForm authors={authors.map((a) => a.name)} />
+      <BornForm names={authors.map((a) => a.name)} setError={props.setError} />
     </div>
   );
 };
+
 export default Authors;
